@@ -1,0 +1,9 @@
+<% if @changesets.present? %>
+<div>
+	<p><b>Объединённая редакция</b></p>
+	<p><%= link_to(
+        	"Перейти",
+        	{:controller => 'all_revisions', :action => 'show', :id => @changesets.first.repository.project, :repository_id => @changesets.first.repository.identifier, :rev => @changesets} 
+      	) %></p><br />
+</div>
+<% end %>

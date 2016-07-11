@@ -1,0 +1,11 @@
+= all_revisions
+
+Установка
+
+Копируем папку с плагином в {redmine_install_dir}/plugins
+
+cd {redmine_install_dir}
+
+ruby bin/rake redmine:plugins:migrate RAILS_ENV=”production”
+
+Перезапускаем Redmine.

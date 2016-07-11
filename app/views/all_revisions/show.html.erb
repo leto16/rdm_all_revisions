@@ -1,0 +1,22 @@
+<%= stylesheet_link_tag "scm", media: "all", 'data-turbolinks-track' => true %>
+
+<h2>Объединённая редакция</h2>
+
+<% if @changeset.issues.visible.any? || User.current.allowed_to?(:manage_related_issues, @repository.project) %>
+  <%= render :partial => 'repositories/related_issues' %>
+<% end %>
+
+<% if User.current.allowed_to?(:browse_repository, @project) %>
+<h3><%= l(:label_attachment_plural) %></h3>
+<ul id="changes-legend">
+<li class="change change-A"><%= l(:label_added)    %></li>
+<li class="change change-M"><%= l(:label_modified) %></li>
+<li class="change change-C"><%= l(:label_copied)   %></li>
+<li class="change change-R"><%= l(:label_renamed)  %></li>
+<li class="change change-D"><%= l(:label_deleted)  %></li>
+</ul>
+
+<div class="changeset-changes">
+<%= render_changesets_changes %>
+</div>
+<% end %>
