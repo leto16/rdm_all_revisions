@@ -22,15 +22,31 @@ module AllRevisionsHelper
       end
 	  end
 
-	  iterator = 0
+	  mod_file = ("A".."Z").to_a.reverse + ("a".."z").to_a.reverse
+    iterator = 0
+    list_of_files = []
+
     tree = { }
-    changes.each do |change|
+    changes.reverse.each do |change|
       p = tree
       dirs = change.path.to_s.split('/').select {|d| !d.blank?}
       path = ''
       dirs.each do |dir|
+        iterator = 0 if iterator == mod_file.length
+
       	if dir == dirs.last
-        	path += '/' + dir + iterator.to_s
+          if change.action == 'M'
+            if !list_of_files.index(dir)
+              list_of_files << dir
+        	    path += '/' + dir + mod_file[iterator]
+              iterator += 1
+            else
+              path = ''
+            end
+          else
+            path += '/' + dir + mod_file[iterator]
+            iterator += 1
+          end
         else
         	path += '/' + dir
         end
@@ -39,7 +55,6 @@ module AllRevisionsHelper
         p[path] ||= {}
         p = p[path]
       end 
-      iterator += 1
       p[:c] = change
     end
     render_changes_tree(tree[:s])
@@ -73,12 +88,7 @@ module AllRevisionsHelper
                              :path => path_param,
                              :rev => c.changeset.identifier) unless c.action == 'D'
         text << " - #{h(c.revision)}" unless c.revision.blank?
-        text << ' ('.html_safe + link_to(l(:label_diff), :controller => 'repositories',
-                                       :action => 'diff',
-                                       :id => @project,
-                                       :repository_id => @repository.identifier_param,
-                                       :path => path_param,
-                                       :rev => c.changeset.identifier) + ') '.html_safe if c.action == 'M'
+        
         text << ' '.html_safe + content_tag('span', h(c.from_path), :class => 'copied-from') unless c.from_path.blank?
         output << "<li class='#{style}'>#{text}</li>"
       end
